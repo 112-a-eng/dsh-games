@@ -1,0 +1,37 @@
+// 资源定义：应用图标 + 版本信息
+// 注意：图标与版本信息都用数字 ID（版本资源必须是 ID 1，Windows 的
+// GetFileVersionInfo / 资源管理器才会读取；具名资源不会生效）。
+
+#define IDI_APPICON 101
+#define VS_VERSION_INFO 1
+
+IDI_APPICON ICON "app.ico"
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,0
+ PRODUCTVERSION 1,0,0,0
+ FILEFLAGSMASK 0x3fL
+ FILEFLAGS 0x0L
+ FILEOS 0x40004L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "CompanyName", "CppMinesweeper"
+            VALUE "FileDescription", "Minesweeper - native Win32/GDI (C++20)"
+            VALUE "FileVersion", "1.0.0.0"
+            VALUE "InternalName", "Minesweeper"
+            VALUE "OriginalFilename", "Minesweeper.exe"
+            VALUE "ProductName", "Minesweeper"
+            VALUE "ProductVersion", "1.0.0.0"
+            VALUE "LegalCopyright", "Free to use"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
