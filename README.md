@@ -1,13 +1,37 @@
 # 小游戏合集 · Mini Games
 
-四个从零手写的完整游戏，技术栈各不相同。都不是 demo——能直接玩（含手机 APK），也都有单元测试和打包脚本。
+五个从零手写的完整游戏，技术栈各不相同。都不是 demo——能直接玩（含手机 APK），也都有单元测试和打包脚本。
 
 | 项目 | 技术栈 | 代码量 | 一句话 |
 |---|---|---|---|
+| 💎 **[宝石三消（Android）](android-match3/)** | **Java + 原生 Android SDK** | 1500 行 | 主流三消玩法：限步冲分、三档星级、直线/爆炸/彩虹三种道具、连锁倍数计分；**45 KB 的 APK、零权限**；[**点这里下载 APK**](android-match3/match3.apk) |
 | 📱 **[2048（Android）](android-2048/)** | **Java + 原生 Android SDK** | 900 行 | **33 KB 的 APK、零权限**；不用 Gradle/AndroidX，手工 `javac + aapt2 + d8 + apksigner` 出包；[**点这里下载 APK**](android-2048/2048.apk) |
 | 🎮 **[扫雷](minesweeper_cpp/)** | **C++20 + 原生 Win32/GDI** | 1735 行 | 零第三方依赖、**零图片资源**（图标、7 段数码管、笑脸按钮、3D 格子全是代码画的），逻辑与界面彻底分层，**441 万项断言**的单元测试 |
 | 📈 **[股票模拟交易](stock_game/)** | **Python + tkinter** | 3087 行 | 尽可能贴近 A 股实盘：涨跌停 / T+1 / 佣金印花税 / 滑点与冲击成本 / 限价挂单 / 部分成交 / 融资强平；五档盘口、逐笔成交、分时与日K |
 | 🧱 **[俄罗斯方块](tetris.py)** | **Python + tkinter** | 688 行 | 60FPS 增量渲染（元素复用不重建）、幽灵落点、暂存 Hold、7-bag 随机、自绘 DAS/ARR 连发手感 |
+
+---
+
+## 💎 宝石三消（Android）
+
+主流玩法的手游三消：8×8 棋盘、6 种宝石、限步数冲目标分、三档星级。
+**同样是零依赖手工构建**，产物 **45 KB**，清单里**没有申请任何权限**。
+
+**装法**：把 [`android-match3/match3.apk`](android-match3/match3.apk) 传到手机点安装即可（Android 5.0+）。
+
+- 拖动/点击交换相邻两格，只能交换能凑成三连的，换错自动弹回
+- **三种道具**（主流三消通用规则）：4 连→消整行/整列，L/T 交叉→3×3 爆炸，直线 5 连→彩虹球消全色
+- **连锁倍数计分**：`格数 × 20 × 连锁层数 + 道具数 × 60 × 连锁层数`，高分来自连环塌陷而不是单次消得多
+- 关卡曲线：目标 `1500 + (关-1)×900`、步数 `max(18, 24 - (关-1)/3)`，达标 1 星 / 1.5 倍 2 星 / 2 倍 3 星
+- 卡住 4 秒自动提示可行走法；真的死局自动打乱重排
+- 界面全部 Canvas 手绘：6 种宝石各有渐变 + **不同内部图形**（不靠颜色也能区分），
+  四段式动画状态机（交换 150ms → 弹回 → 消除 220ms → 加速下落 190ms），过关三星逐颗弹出
+- 逻辑层 `Board.java` **不引用任何 Android API**，**219075 项断言 / 10 组用例**
+  （含 300 局连锁长跑）可以在没装 Android SDK 的机器上直接 `java` 跑
+
+详见 [android-match3/README.md](android-match3/README.md)——
+里面有测试当场抓到的一个隐蔽 bug：`clear()` 算完结果又 `return new ClearOutcome(...)`，
+把生成道具的信息整个丢了，表现是"游戏能玩但永远不出道具"。
 
 ---
 
@@ -128,6 +152,12 @@ py tetris.py --self-test
 
 ```
 .
+├── android-match3/            宝石三消（Java / 原生 Android）
+│   ├── src/com/dsh/match3/   Board.java（纯逻辑）、BoardTest.java（自测）、GameView.java、MainActivity.java
+│   ├── res/                  图标与文案
+│   ├── match3.apk            编译好的安装包（45 KB，调试签名）
+│   └── build.ps1             一键构建（javac → aapt2 → d8 → zipalign → apksigner）
+├── android-2048/             2048（Java / 原生 Android，结构同上）
 ├── minesweeper_cpp/          扫雷（C++ / Win32）
 │   ├── src/                  game.h/game.cpp（纯逻辑，无 windows.h）、main.cpp（界面）、tests.cpp（测试）
 │   ├── res/                  图标与版本信息资源
@@ -155,6 +185,10 @@ py tetris.py --self-test
 
 ## 已知简化
 
+- 两个 Android 游戏**只在代码层面验证过，没有在真机/模拟器上跑过**（本机没有设备，也没装模拟器）。
+  逻辑有 219075 / 2979 项断言保证，APK 的清单、权限、签名（v1/v2/v3）、zipalign 对齐、
+  dex 内容都逐项校验过，但**真机上的手感与性能请以装上后为准**
+- 两个 Android APK 都是**调试签名**，不能上应用商店，个人安装没问题
 - 股票游戏的行情**完全由模型生成**，用了真实公司名与代码方便代入，但与真实市场无关，**不构成投资建议**
 - 股票游戏没有分红送转/除权除息、没有集合竞价、没有逐笔委托簿、不能融券做空
 - 未做跨平台：扫雷是 Windows 专属（Win32/GDI），两个 Python 游戏依赖 tkinter
