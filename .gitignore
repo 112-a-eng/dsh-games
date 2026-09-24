@@ -24,6 +24,8 @@ build/
 .build/work*/
 .build/zt*/
 *.log
+*.idsig
+.build/icon_*_preview.png
 
 # ---- 与本仓库无关的本地文件 ----
 Windows常用指令集/
