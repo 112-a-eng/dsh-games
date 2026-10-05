@@ -2,6 +2,8 @@
 
 五个从零手写的完整游戏，技术栈各不相同。都不是 demo——能直接玩（含手机 APK），也都有单元测试和打包脚本。
 
+> 🔧 姊妹项目：**[Windows 常用指令集](https://github.com/112-a-eng/win-toolkit)** —— CMD/PowerShell 速查手册 + 9 个实用脚本 + WinForms 图形工具台（含单文件 EXE）。
+
 | 项目 | 技术栈 | 代码量 | 一句话 |
 |---|---|---|---|
 | 💎 **[宝石三消（Android）](android-match3/)** | **Java + 原生 Android SDK** | 1500 行 | 主流三消玩法：限步冲分、三档星级、直线/爆炸/彩虹三种道具、连锁倍数计分；**45 KB 的 APK、零权限**；[**点这里下载 APK**](android-match3/match3.apk) |
