@@ -1,6 +1,8 @@
 # 小游戏合集 · Mini Games
 
-五个从零手写的完整游戏，外加一个 Windows 桌面记账软件，技术栈各不相同。都不是 demo——能直接玩 / 用（含手机 APK、单文件 EXE），也都有自测和打包脚本。
+五个从零手写的完整游戏，技术栈各不相同。都不是 demo——能直接玩 / 用（含手机 APK、单文件 EXE），也都有自测和打包脚本。
+
+> 💰 姊妹项目：**[112账务](https://github.com/112-a-eng/112-ledger)** —— Windows 桌面复式记账软件，已从本仓库拆分为独立仓库。  
 
 > 🔧 姊妹项目：**[Windows 常用指令集](https://github.com/112-a-eng/win-toolkit)** —— CMD/PowerShell 速查手册 + 9 个实用脚本 + WinForms 图形工具台（含单文件 EXE）。
 
@@ -11,7 +13,7 @@
 | 🎮 **[扫雷](minesweeper_cpp/)** | **C++20 + 原生 Win32/GDI** | 1735 行 | 零第三方依赖、**零图片资源**（图标、7 段数码管、笑脸按钮、3D 格子全是代码画的），逻辑与界面彻底分层，**441 万项断言**的单元测试 |
 | 📈 **[股票模拟交易](stock_game/)** | **Python + tkinter** | 3087 行 | 尽可能贴近 A 股实盘：涨跌停 / T+1 / 佣金印花税 / 滑点与冲击成本 / 限价挂单 / 部分成交 / 融资强平；五档盘口、逐笔成交、分时与日K |
 | 🧱 **[俄罗斯方块](tetris.py)** | **Python + tkinter** | 688 行 | 60FPS 增量渲染（元素复用不重建）、幽灵落点、暂存 Hold、7-bag 随机、自绘 DAS/ARR 连发手感 |
-| 💰 **[112账务（Windows 记账软件）](ledger/)** | **Python + tkinter + SQLite** | 3460 行 | 复式记账：借贷凭证、科目余额表、试算平衡、资产负债表、利润表、期末结转损益；零第三方依赖，可打包单文件 exe |
+| 💰 **[112账务（Windows 记账软件）](https://github.com/112-a-eng/112-ledger)** | **Python + tkinter + SQLite** | 3140 行 | 复式记账：借贷凭证、科目余额表、试算平衡、资产负债表、利润表、期末结转损益；零第三方依赖，可打包单文件 exe（**已独立成库**） |
 
 ---
 
@@ -23,15 +25,13 @@
 
 | 想做的事 | 命令 |
 |---|---|
-| 打开 112账务（源码运行） | `py ledger_gui.py` |
-| 打开 112账务（已打包 exe） | 双击 `dist\112账务.exe`（`dist\` 不入库，需自己打包） |
-| 用演示数据看账务功能 | `py ledger_gui.py --demo` |
 | 玩股票模拟交易 | `py stock_game_gui.py`（先弹「开局设置」窗口） |
 | 玩俄罗斯方块 | `py tetris.py` |
-| 跑自测（不开窗口） | `py -m ledger --self-test` / `py -m stock_game --self-test` / `py tetris.py --self-test` |
+| 跑自测（不开窗口） | `py -m stock_game --self-test` / `py tetris.py --self-test` |
 | 编译扫雷（需 VS 2022/2026 + C++ 桌面开发） | `powershell -ExecutionPolicy Bypass -File .\minesweeper_cpp\build.ps1` |
 
-> 账套默认存于 `文档\112账务\账套.db`；换一个账套文件：`py ledger_gui.py --db D:\账套\2026.db`。
+> 112账务（记账软件）已拆到独立仓库 **[112-a-eng/112-ledger](https://github.com/112-a-eng/112-ledger)**，
+> 运行、打包、快捷键和自测说明都在那边。
 > `dist\`、`*.exe` 都在 `.gitignore` 里，从仓库 clone 下来需要自己跑一次打包脚本。
 
 ---
@@ -173,53 +173,17 @@ py tetris.py --self-test    # 只跑逻辑自测，不开窗口
 
 ---
 
-## 💰 112账务（Windows 记账软件）
+## 💰 112账务（Windows 记账软件）—— 已独立成库
+
+这个记账软件已经拆成独立仓库：**[112-a-eng/112-ledger](https://github.com/112-a-eng/112-ledger)**
+
+![资产负债表](https://raw.githubusercontent.com/112-a-eng/112-ledger/main/docs/screenshot-ledger.png)
 
 复式记账（借贷记账法），面向小微企业 / 个人记账。**零第三方依赖**（Python 标准库 + tkinter + SQLite），
-账套就是一个本地 `.db` 文件，可整体拷贝备份。
+账套就是一个本地 `.db` 文件，可整体拷贝备份。功能包括：借贷凭证、科目余额表、试算平衡表、
+资产负债表、利润表、明细账 / 总账、期初余额、期末结转损益、Canvas 手绘图表。
 
-![资产负债表](docs/screenshot-ledger.png)
-
-**凭证与科目**
-
-- **借贷必相等**：一张凭证借方合计 = 贷方合计才能保存；一条分录只能填借方或贷方
-- 只能记到**末级（明细）科目**，支持在标准科目下自建二级、三级明细
-- 凭证可保存为草稿、过账、取消过账、删除；**草稿不参与余额与报表**
-- 内置一套《企业会计准则》常用科目（资产 / 负债 / 所有者权益 / 成本 / 损益五类，60 余个）
-
-**账簿与报表**
-
-- 科目余额表、**试算平衡表**（自动校验借贷平衡）、总账、明细账（滚动余额）
-- **资产负债表**（资产 = 负债 + 所有者权益，恒等式即使用户乱记也成立）、多步式**利润表**
-- **期末结转损益**：一键把损益类科目结转到「本年利润」
-- 期初余额录入 + 借贷平衡校验；账簿与报表均可导出 CSV
-
-**界面**：六个标签页——凭证录入 / 凭证管理 / 账簿查询 / 财务报表 / 科目与期初 / 图表分析。
-图表全部 Canvas 手绘：费用构成饼图、月度收入费用柱状图，以及收入 / 费用 / 净利 / 资产 KPI。
-高分屏按真实 DPI 渲染（4K 屏不糊），窗口按屏幕居中；表格带斑马纹、金额右对齐、空表有提示。
-
-**快捷键**：`Ctrl+Enter` 保存并过账 · `Ctrl+S` 保存为草稿 · `Ctrl+N` 增加分录行 ·
-`Ctrl+D` 删除末行 · `F5` 刷新当前数据。
-
-**运行**
-
-```powershell
-py ledger_gui.py                 # 源码运行（首次为空账套，账套存于 文档\112账务\账套.db）
-py ledger_gui.py --demo          # 载入一套演示数据
-py ledger_gui.py --db 账套.db     # 用指定账套文件（默认 文档\112账务\账套.db）
-py -m ledger --self-test         # 无界面自测（11 项，不开窗口）
-powershell -ExecutionPolicy Bypass -File .\build_ledger_exe.ps1                 # 打包 onedir → dist\112账务\
-powershell -ExecutionPolicy Bypass -File .\build_ledger_exe.ps1 -Mode onefile   # 打包单文件 → dist\112账务.exe
-```
-
-> 从旧版「凭安账务」升级：如果 `文档\112账务\` 还没有账套，而旧的 `文档\凭安账务\账套.db` 存在，
-> 程序会自动沿用旧账套文件，不用手工搬。
-
-![图表分析](docs/screenshot-ledger-charts.png)
-
-**自测**（11 组，`py -m ledger --self-test`）：金额解析与格式化、科目表与日期、凭证借贷校验、
-明细科目层级、过账与余额、试算平衡与会计恒等式、明细账滚动余额、期初平衡、期末结转、
-图表汇总，以及 **600 张随机凭证长跑** —— 每张都校验借贷平衡与 `资产 = 负债 + 权益`。
+运行、打包（单文件 exe）、快捷键和自测说明，都见仓库里的 [README](https://github.com/112-a-eng/112-ledger#readme)。
 
 ---
 
@@ -246,21 +210,8 @@ powershell -ExecutionPolicy Bypass -File .\build_ledger_exe.ps1 -Mode onefile   
 │   ├── charts.py             分时图 / 日K（均线、成交量、十字光标）
 │   ├── ui.py                 tkinter 界面
 │   └── selftest.py           无界面自测
-├── ledger/                   112账务（Windows 记账软件，Python 包）
-│   ├── config.py             科目类别、余额方向、标准会计科目表
-│   ├── money.py              金额（内部一律整数「分」，避免浮点误差）
-│   ├── models.py             科目 / 凭证 / 分录 / 科目余额
-│   ├── db.py                 SQLite 持久层
-│   ├── accounting.py         复式记账引擎：校验、过账、余额、期初、结转损益
-│   ├── reports.py            科目余额表 / 试算平衡 / 资产负债表 / 利润表
-│   ├── charts.py             Canvas 手绘饼图与柱状图
-│   ├── ui.py                 tkinter 界面（六个标签页）
-│   ├── demo.py               演示账套
-│   └── selftest.py           无界面自测
 ├── tetris.py                 俄罗斯方块（单文件）
-├── ledger_gui.py             112账务启动器 / 打包入口
 ├── build_stock_exe.ps1       打包股票游戏（onedir/onefile 两模式）
-├── build_ledger_exe.ps1      打包 112账务
 ├── build_exe.ps1             打包俄罗斯方块
 └── .build/                   图标生成器、打包、截图与验证脚本
 ```
@@ -268,8 +219,8 @@ powershell -ExecutionPolicy Bypass -File .\build_ledger_exe.ps1 -Mode onefile   
 ## 关于打包
 
 几个 Python 项目都用 PyInstaller 打包，构建脚本会在打包前**先跑自测**，不通过就中止。
-股票游戏与112账务默认 onedir 模式（启动快），单文件模式启动约 2~3 秒（每次要自解压），
-打包时还会裁掉用不到的标准库（112账务依赖 sqlite3 与 decimal，这两个不裁）。
+股票游戏默认 onedir 模式（启动快），单文件模式启动约 2~3 秒（每次要自解压），
+打包时还会裁掉用不到的标准库。
 
 ## 已知简化
 
@@ -279,8 +230,6 @@ powershell -ExecutionPolicy Bypass -File .\build_ledger_exe.ps1 -Mode onefile   
 - 两个 Android APK 都是**调试签名**，不能上应用商店，个人安装没问题
 - 股票游戏的行情**完全由模型生成**，用了真实公司名与代码方便代入，但与真实市场无关，**不构成投资建议**
 - 股票游戏没有分红送转/除权除息、没有集合竞价、没有逐笔委托簿、不能融券做空
-- 112账务为**单用户单账套**设计，没有多账套切换、权限与审计、自动生成财务报表附注；
-  期末结转按「年」结转，未做逐月结转与跨年结账的限制校验
 - 未做跨平台：扫雷是 Windows 专属（Win32/GDI），各个 Python 项目依赖 tkinter
 
 ## License
