@@ -23,6 +23,7 @@ build/
 *.zip
 .build/work*/
 .build/zt*/
+.build/archive*/
 *.log
 *.idsig
 .build/icon_*_preview.png
