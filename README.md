@@ -184,6 +184,7 @@ py tetris.py --self-test    # 只跑逻辑自测，不开窗口
 资产负债表、利润表、明细账 / 总账、期初余额、期末结转损益、Canvas 手绘图表。
 
 运行、打包（单文件 exe）、快捷键和自测说明，都见仓库里的 [README](https://github.com/112-a-eng/112-ledger#readme)。
+不想装 Python 的话，可以直接从 [Releases](https://github.com/112-a-eng/112-ledger/releases/latest) 下载单文件 exe。
 
 ---
 
